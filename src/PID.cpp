@@ -28,7 +28,7 @@ void PID::Init(double Kp, double Ki, double Kd) {
     bestError_ = std::numeric_limits<double>::max();
     
     iter_ = 0;
-    settle_iter_ = 100;
+    settle_iter_ = 1;
     
     coefficient_index_ = 0;
     should_add_ = true;
@@ -63,12 +63,7 @@ void PID::UpdateError(double cte) {
     
     if (iter_ % settle_iter_ == 0) {
         
-        // totalError_ = totalError_ / settle_iter_;
-        
-        cout << "Kp_: " << Kp_ << "\nKi_: " << Ki_ << "\nKd_: " << Kd_ << endl;
-        for (int i=0; i<dK_.size(); i++) {
-            cout << "dK_[" << i << "]: " << dK_[i] << endl;
-        }
+        totalError_ = totalError_ / settle_iter_;
         
         // determine whether to apply twiddle
         double sum_dK_ = 0.0;
@@ -76,17 +71,16 @@ void PID::UpdateError(double cte) {
             sum_dK_ += dK_[i];
         }
         
-        if (sum_dK_ > 0.001) {
-            shouldApplyTwiddle_ = true;
-        }
+        shouldApplyTwiddle_ = (sum_dK_ > 0.001);
         
         if (shouldApplyTwiddle_) {
+            
+            cout << "Kp_: " << Kp_ << "\nKi_: " << Ki_ << "\nKd_: " << Kd_ << endl;
+            for (int i=0; i<dK_.size(); i++) {
+                cout << "dK_[" << i << "]: " << dK_[i] << endl;
+            }
+            
             UpdateCoefficientsUsingTwiddle(cte);
-        }
-        
-        cout << "Kp_: " << Kp_ << "\nKi_: " << Ki_ << "\nKd_: " << Kd_ << endl;
-        for (int i=0; i<dK_.size(); i++) {
-            cout << "dK_[" << i << "]: " << dK_[i] << endl;
         }
         
         // reset totalError_
@@ -111,7 +105,7 @@ void PID::UpdateCoefficientsUsingTwiddle(double cte) {
     
     if (totalError_ < bestError_) {
         
-        cout << "Improved error" << endl;
+        cout << "Found an improvement!!!!" << endl;
         
         bestError_ = totalError_;
         dK_[coefficient_index_] *= 1.1;
@@ -125,15 +119,19 @@ void PID::UpdateCoefficientsUsingTwiddle(double cte) {
     
     if (should_add_ == true && should_subtract_ == true) {
         
+        cout << "************* Adding..." << endl;
         UpdateCoefficientByAddingDelta(coefficient_index_, dK_[coefficient_index_]);
         should_add_ = false;
         
     } else if (should_add_ == false && should_subtract_ == true) {
         
+        cout << "************* Subtracting..." << endl;
         UpdateCoefficientByAddingDelta(coefficient_index_, -2*dK_[coefficient_index_]);
         should_subtract_ = false;
         
     } else {
+        
+        cout << "Adding/Subtracting did not improve error. Continue to next parameter." << endl;
         
         UpdateCoefficientByAddingDelta(coefficient_index_, dK_[coefficient_index_]);
         dK_[coefficient_index_] *= 0.9;

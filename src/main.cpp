@@ -61,6 +61,7 @@ int main()
           */
             pid.UpdateError(cte);
             steer_value = -pid.Kp_*pid.p_error - pid.Ki_*pid.i_error - pid.Kd_*pid.d_error;
+            steer_value = fmod(steer_value, 1);
           
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
