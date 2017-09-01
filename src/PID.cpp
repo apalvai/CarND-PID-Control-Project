@@ -28,7 +28,7 @@ void PID::Init(double Kp, double Ki, double Kd) {
     bestError_ = std::numeric_limits<double>::max();
     
     iter_ = 0;
-    settle_iter_ = 1;
+    settle_iter_ = 100;
     
     coefficient_index_ = 0;
     should_add_ = true;
