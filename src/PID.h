@@ -50,10 +50,13 @@ private:
     
     int iter_;
     int settle_iter_;
+    int eval_iter_;
     int coefficient_index_;
     
     bool should_add_;
     bool should_subtract_;
+    
+    bool _is_first_update;
     
     std::vector<double> dK_;
     
