@@ -29,7 +29,7 @@ void PID::Init(double Kp, double Ki, double Kd) {
     
     iter_ = 0;
     settle_iter_ = 100;
-    eval_iter_ = 1000;
+    eval_iter_ = 100;
     
     coefficient_index_ = 0;
     should_add_ = true;
@@ -62,6 +62,7 @@ void PID::UpdateError(double cte) {
     i_error += cte;
     d_error =  cte - prev_cte;
     
+    cout << "Kp_: " << Kp_ << " Ki_: " << Ki_ << " Kd_: " << Kd_ << endl;
     cout << "p_error: " << p_error << " i_error: " << i_error << " d_error: " << d_error << endl;
     
     if (iter_ % (settle_iter_ + eval_iter_) > settle_iter_) {
@@ -70,15 +71,13 @@ void PID::UpdateError(double cte) {
     
     if (iter_ % (settle_iter_ + eval_iter_) == 0) {
         
-        totalError_ = totalError_ / settle_iter_;
-        
         // determine whether to apply twiddle
         double sum_dK_ = 0.0;
         for (int i=0; i<dK_.size(); i++) {
             sum_dK_ += dK_[i];
         }
         
-        shouldApplyTwiddle_ = (sum_dK_ > 0.0001);
+        shouldApplyTwiddle_ = (sum_dK_ > 0.001);
         
         if (shouldApplyTwiddle_) {
             

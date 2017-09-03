@@ -35,10 +35,10 @@ int main()
     PID pid_steer, pid_throttle;
     
     // sterring
-    pid_steer.Init(0.1, 0.0001, 2.0);
+    pid_steer.Init(0.2, 0.001, 5.0);
     
     // throttle
-    pid_throttle.Init(0.1, 0.0001, 2.0);
+    pid_throttle.Init(0.2, 0.001, 5.0);
     
     h.onMessage([&pid_steer, &pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
@@ -68,7 +68,7 @@ int main()
                     steer_value = fmin(fmax(steer_value, -1), 1); // fmod(steer_value, 1);
                     
                     pid_throttle.UpdateError(cte);
-                    throttle_value = 0.5 - pid_throttle.TotalError();
+                    throttle_value = 0.75 - pid_throttle.TotalError();
                     std::cout << "computed throttle: " << throttle_value << std::endl;
                     throttle_value = fmod(throttle_value, 1);
                     
