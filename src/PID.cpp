@@ -29,7 +29,7 @@ void PID::Init(double Kp, double Ki, double Kd) {
     
     iter_ = 0;
     settle_iter_ = 100;
-    eval_iter_ = 100;
+    eval_iter_ = 500;
     
     coefficient_index_ = 0;
     should_add_ = true;
@@ -77,7 +77,7 @@ void PID::UpdateError(double cte) {
             sum_dK_ += dK_[i];
         }
         
-        shouldApplyTwiddle_ = (sum_dK_ > 0.001);
+        shouldApplyTwiddle_ = (sum_dK_ > 0.00001);
         
         if (shouldApplyTwiddle_) {
             

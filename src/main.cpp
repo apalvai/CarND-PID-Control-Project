@@ -35,10 +35,10 @@ int main()
     PID pid_steer, pid_throttle;
     
     // sterring
-    pid_steer.Init(0.2, 0.001, 10.0);
+    pid_steer.Init(0.13, 0.00027, 3.1);
     
     // throttle
-    pid_throttle.Init(0.2, 0.001, 10.0);
+    pid_throttle.Init(0.13, 0.00026, 3.0);
     
     h.onMessage([&pid_steer, &pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
@@ -56,12 +56,7 @@ int main()
                     double speed = std::stod(j[1]["speed"].get<std::string>());
                     double angle = std::stod(j[1]["steering_angle"].get<std::string>());
                     double steer_value, throttle_value;
-                    /*
-                     * TODO: Calcuate steering value here, remember the steering value is
-                     * [-1, 1].
-                     * NOTE: Feel free to play around with the throttle and speed. Maybe use
-                     * another PID controller to control the speed!
-                     */
+                    
                     pid_steer.UpdateError(cte);
                     steer_value = pid_steer.TotalError();
                     std::cout << "computed steering: " << steer_value << std::endl;
